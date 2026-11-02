@@ -1,12 +1,12 @@
-# Mario Run EPS — V131.37 PWA
+# Mario Run EPS — PWA V131.38
 
-Version GitHub Pages nettoyée pour iPad.
+Mise à jour : bibliothèque et éditeur de protocoles d’évaluation.
 
-- aucune dépendance Koder ;
-- données enregistrées localement sur l’iPad ;
-- sauvegarde/export via la feuille de partage iPad et import depuis Fichiers ;
-- 3 copies locales tournantes conservées ;
-- Service Worker avec mise à jour explicite « Mettre à jour » ;
-- fonctionnement hors ligne après la première mise en cache.
+- création / duplication / modification / suppression de protocoles personnels
+- critères automatiques et critères manuels
+- import / export JSON d’un protocole
+- association d’un protocole à la séance terminale d’une classe
+- saisie des critères manuels dans le Bilan
+- fiche Notes détaillée et historique figé par séance
 
-Publier tous les fichiers à la racine du dépôt GitHub Pages.
+Déploiement : GitHub Pages, branche `main`, dossier racine.
