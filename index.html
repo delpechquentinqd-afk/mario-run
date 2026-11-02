@@ -13,12 +13,9 @@
 <style>
 html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#fff;color:#171717}
 #boot{min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box;text-align:center}
-#boot .box{max-width:560px}
-#boot img{width:min(280px,70vw);height:auto;display:block;margin:0 auto 24px}
+#boot .box{max-width:560px}#boot img{width:min(280px,70vw);height:auto;display:block;margin:0 auto 24px}
 #boot .spin{width:34px;height:34px;border:4px solid #ddd;border-top-color:#e52424;border-radius:50%;margin:20px auto;animation:r 1s linear infinite}
-#boot p{font-size:17px;line-height:1.4;color:#555}
-#boot .err{color:#9b1c1c;font-weight:700}
-@keyframes r{to{transform:rotate(360deg)}}
+#boot p{font-size:17px;line-height:1.4;color:#555}#boot .err{color:#9b1c1c;font-weight:700}@keyframes r{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -28,23 +25,21 @@ html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,
  const msg=document.getElementById('msg');
  try{
    if('serviceWorker' in navigator){
-     try{ await navigator.serviceWorker.register('./sw.js',{scope:'./'}); }catch(e){ console.warn('SW',e); }
+     try{ window.MARIO_RUN_SW_REG=await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}); }catch(e){ console.warn('SW',e); }
    }
    if(typeof DecompressionStream!=='function') throw new Error('Cette version nécessite iPadOS/Safari 16.4 ou plus récent.');
-   const names=['./app-part-1.gz','./app-part-2.gz','./app-part-3.gz'];
+   const names=['./app-part-1.gz?v=13137','./app-part-2.gz?v=13137','./app-part-3.gz?v=13137'];
    const chunks=await Promise.all(names.map(async name=>{
      const res=await fetch(name,{cache:'no-store'});
-     if(!res.ok) throw new Error('Fichier manquant : '+name);
+     if(!res.ok) throw new Error('Fichier manquant : '+name.split('?')[0]);
      const stream=res.body.pipeThrough(new DecompressionStream('gzip'));
      return new Uint8Array(await new Response(stream).arrayBuffer());
    }));
-   const total=chunks.reduce((n,c)=>n+c.length,0), merged=new Uint8Array(total);
-   let off=0; for(const c of chunks){ merged.set(c,off); off+=c.length; }
+   const total=chunks.reduce((n,c)=>n+c.length,0),merged=new Uint8Array(total);let off=0;
+   for(const c of chunks){merged.set(c,off);off+=c.length;}
    const html=new TextDecoder('utf-8').decode(merged);
-   document.open(); document.write(html); document.close();
- }catch(err){
-   console.error(err); msg.className='err'; msg.textContent='Impossible de charger Mario Run : '+(err?.message||err);
- }
+   document.open();document.write(html);document.close();
+ }catch(err){console.error(err);msg.className='err';msg.textContent='Impossible de charger Mario Run : '+(err?.message||err);}
 })();
 </script>
 </body></html>

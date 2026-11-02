@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Mario Run EPS",
   "short_name": "Mario Run",
-  "description": "Suivi EPS des élèves, cycles, séances, évaluations et Grand Prix.",
+  "description": "Mario Run EPS — suivi des élèves, cycles, séances, évaluations et Grand Prix. PWA hors ligne.",
   "lang": "fr-FR",
   "start_url": "./index.html",
   "scope": "./",
