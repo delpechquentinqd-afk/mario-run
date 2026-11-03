@@ -28,7 +28,7 @@ html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,
      try{ window.MARIO_RUN_SW_REG=await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}); }catch(e){ console.warn('SW',e); }
    }
    if(typeof DecompressionStream!=='function') throw new Error('Cette version nécessite iPadOS/Safari 16.4 ou plus récent.');
-   const names=['./app-part-1.gz?v=13142','./app-part-2.gz?v=13142','./app-part-3.gz?v=13142'];
+   const names=['./app-part-1.gz?v=13143','./app-part-2.gz?v=13143','./app-part-3.gz?v=13143'];
    const chunks=await Promise.all(names.map(async name=>{
      const res=await fetch(name,{cache:'no-store'});
      if(!res.ok) throw new Error('Fichier manquant : '+name.split('?')[0]);

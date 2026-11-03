@@ -1,6 +1,10 @@
-# Mario Run EPS — V131.42
+# Mario Run EPS — PWA V131.43
 
-Mise à jour : identité visuelle harmonisée avec le logo, pastilles compactes dans Préparation, audio iPad/PWA fiabilisé avec déverrouillage au premier toucher et bouton de test, et notation Grand Prix/VMA corrigée.
+Mise à jour :
+- design harmonisé et allégé ;
+- pastilles Grand Prix équipes compactes ;
+- sons iPad via WAV embarqués ;
+- fiches A4 : export PDF via impression native iPad ;
+- cohérence Grand Prix / VMA : une performance supérieure est valorisée.
 
-## Règle GP / VMA
-Une performance égale ou supérieure à la vitesse attendue obtient la totalité des points de cohérence. Une performance supérieure à la VMA est explicitement valorisée. Seuls les écarts à la baisse réduisent progressivement la note.
+Déploiement GitHub Pages : remplacer les fichiers de la version précédente puis laisser GitHub Pages redéployer.
