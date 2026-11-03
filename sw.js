@@ -1,7 +1,7 @@
-const CACHE='mario-run-v131-40';
+const CACHE='mario-run-v131-42';
 const CORE=[
   './','./index.html','./manifest.json',
-  './app-part-1.gz?v=13140','./app-part-2.gz?v=13140','./app-part-3.gz?v=13140',
+  './app-part-1.gz?v=13142','./app-part-2.gz?v=13142','./app-part-3.gz?v=13142',
   './icon-180.png','./icon-192.png','./icon-512.png','./icon-maskable-512.png'
 ];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)));});
