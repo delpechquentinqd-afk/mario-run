@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Mario Run EPS",
   "short_name": "Mario Run",
-  "description": "Mario Run EPS — suivi des élèves, cycles, séances, évaluations, protocoles personnalisés et Grand Prix. PWA iPad hors ligne.",
+  "description": "Mario Run EPS — suivi des élèves, cycles, séances, évaluations, protocoles personnalisés, Grand Prix et repères sonores terrain. PWA iPad hors ligne.",
   "lang": "fr-FR",
   "start_url": "./index.html",
   "scope": "./",
@@ -11,7 +11,7 @@
     "standalone"
   ],
   "orientation": "landscape",
-  "background_color": "#F4F8FC",
+  "background_color": "#F2F5F9",
   "theme_color": "#E52521",
   "categories": [
     "education",

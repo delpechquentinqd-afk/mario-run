@@ -1,5 +1,5 @@
-const CACHE='mario-run-v131-49';
-const CORE=['./','./index.html','./manifest.json','./app-part-1.gz?v=13149','./app-part-2.gz?v=13149','./app-part-3.gz?v=13149','./icon-180.png','./icon-192.png','./icon-512.png','./icon-maskable-512.png'];
+const CACHE='mario-run-v131-50';
+const CORE=['./','./index.html','./manifest.json','./app-part-1.gz?v=13150','./app-part-2.gz?v=13150','./app-part-3.gz?v=13150','./icon-180.png','./icon-192.png','./icon-512.png','./icon-maskable-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('mario-run-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting();});
