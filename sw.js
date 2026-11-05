@@ -1,4 +1,4 @@
-const CACHE = 'mario-run-v131-54';
+const CACHE = 'mario-run-v131-55';
 const APP_SHELL = [
   './',
   './index.html',
@@ -7,9 +7,9 @@ const APP_SHELL = [
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-512.png',
-  './app-part-1.gz?v=13154',
-  './app-part-2.gz?v=13154',
-  './app-part-3.gz?v=13154'
+  './app-part-1.gz?v=13155',
+  './app-part-2.gz?v=13155',
+  './app-part-3.gz?v=13155'
 ];
 
 self.addEventListener('install', event => {
