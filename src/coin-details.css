@@ -1,0 +1,42 @@
+/* V131.56 — détail des pièces intégré à la ligne, sans recouvrir les relevés. */
+.coin-details{grid-column:1/-1;min-width:0;width:100%;box-sizing:border-box;border:1px solid #cbd7e8;border-radius:12px;background:#f7faff;color:#17213a;margin:5px 0 2px;overflow:hidden}
+.coin-details>summary{min-height:44px;padding:6px 10px;box-sizing:border-box;display:flex;align-items:center;gap:9px;cursor:pointer;list-style:none;touch-action:manipulation;-webkit-tap-highlight-color:rgba(22,143,210,.12)}
+.coin-details>summary::-webkit-details-marker{display:none}
+.coin-details>summary:focus-visible{outline:3px solid #168fd2;outline-offset:-3px;border-radius:10px}
+.coin-net{display:flex;align-items:baseline;gap:7px;flex:0 0 auto;line-height:1.25}
+.coin-net>span{font-size:12px;color:#516077;font-weight:700}
+.coin-net>strong{font-size:16px;color:#17213a;white-space:nowrap}
+.coin-summary-badges{display:flex;gap:5px;flex-wrap:wrap;min-width:0}
+.coin-status-badge{font-size:12px;line-height:1.25;border-radius:999px;padding:4px 7px;font-weight:800;white-space:nowrap;border:1px solid transparent}
+.coin-bonus.coin-active{background:#e3f6df;border-color:#b8dfad;color:#215c25}
+.coin-malus.coin-active{background:#ffe6df;border-color:#edb5a6;color:#8f2a1e}
+.coin-neutral{background:#eaf0f7;border-color:#d5dfeb;color:#59667a}
+.coin-summary-status{font-size:10px;font-weight:800;color:#73520d;background:#fff0c7;border:1px solid #e9d290;padding:3px 5px;border-radius:7px;line-height:1.25;white-space:nowrap}
+.coin-summary-action{font-size:12px;font-weight:800;color:#245583;display:flex;align-items:center;gap:5px;margin-left:auto;white-space:nowrap}
+.coin-summary-action>span{display:inline-block;transition:transform .12s}
+.coin-details[open]>.coin-summary-action>span,.coin-details[open]>summary .coin-summary-action>span{transform:rotate(180deg)}
+.coin-detail-body{max-height:clamp(150px,26dvh,270px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-top:1px solid #d8e2ef;padding:6px 10px 8px;box-sizing:border-box;scrollbar-gutter:stable}
+.coin-detail-row{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e0e7f0;min-width:0}
+.coin-detail-label{min-width:0;display:flex;flex-direction:column;gap:3px;line-height:1.35}
+.coin-detail-label>b{font-size:14px}
+.coin-detail-label>small{font-size:12px;color:#4d5b70;overflow-wrap:anywhere}
+.coin-detail-state{font-size:12px;font-weight:800;color:#556278}
+.coin-state-obtained .coin-detail-state{color:#25652b}
+.coin-state-applied .coin-detail-state{color:#9b3120}
+.coin-state-pending .coin-detail-state{color:#775516}
+.coin-state-inactive .coin-detail-state,.coin-state-unearned .coin-detail-state,.coin-state-none .coin-detail-state{color:#5e687a}
+.coin-detail-amount{font-size:14px;line-height:1.5;white-space:nowrap;flex:0 0 auto;color:#223452}
+.coin-state-obtained .coin-detail-amount{color:#25652b}
+.coin-state-applied .coin-detail-amount{color:#9b3120}
+.coin-detail-total{display:flex;justify-content:space-between;gap:12px;padding:10px 0 5px;font-size:14px;color:#17213a}
+.coin-detail-total>strong{white-space:nowrap}
+.coin-auto-note{margin:4px 0 0;font-size:10px;color:#58667b;line-height:1.4}
+.coin-provisional{margin:2px 0 6px;padding:7px 8px;background:#fff0c7;border:1px solid #e9d290;border-radius:8px;font-size:11px;font-weight:800;line-height:1.4;color:#73520d}
+.coin-floor-note{margin:7px 0;padding:7px 8px;background:#eaf0fa;border-radius:8px;font-size:11px;line-height:1.4;color:#3a4e6d}
+.coin-unavailable{margin:7px 0;padding:9px 10px;background:#f0f3f8;border:1px solid #d6dfeb;border-radius:9px;color:#526078;font-size:11px;line-height:1.45}
+.coin-history{margin:10px 0}
+.coin-history>.coin-detail-body{max-height:52dvh}
+.coin-history .coin-details{margin:6px 0}
+.coin-history .coin-details>.coin-detail-body{max-height:none;overflow:visible;overscroll-behavior:auto}
+@media(max-width:767px){.coin-details>summary{gap:6px;flex-wrap:wrap;padding:7px 8px}.coin-net{gap:5px}.coin-net>span{font-size:10px}.coin-net>strong{font-size:14px}.coin-summary-badges{gap:3px}.coin-status-badge{font-size:10px;padding:3px 5px}.coin-summary-action{font-size:11px}.coin-detail-body{padding:5px 8px 7px;max-height:clamp(145px,25dvh,240px)}.coin-detail-row{gap:7px}.coin-history>.coin-detail-body{max-height:50dvh}}
+@media print{.coin-details{break-inside:avoid}.coin-detail-body,.coin-history>.coin-detail-body{max-height:none;overflow:visible}}
