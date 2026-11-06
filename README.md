@@ -1,6 +1,7 @@
 # Mario Run EPS — préparation V131.56
 
-Cette branche prépare deux corrections à partir de la V131.55 publiée sur `main`
+Cette branche prépare deux corrections et le détail tactile des pièces à partir
+de la V131.55 publiée sur `main`
 (commit `1ec9464c1ee82c0d8c2dfcadfb5b35212a969b95`). Elle n’est pas une publication.
 La fusion et la mise en ligne attendent la validation du propriétaire.
 
@@ -28,6 +29,27 @@ Le statut devient automatique. Le calcul des gains réévalue la règle, même s
 ancien brouillon contient un indicateur `rg` attribué manuellement. L’ancien
 bouton ne permet plus de basculer ce statut.
 
+## Détail tactile des pièces
+
+Dans chaque ligne de saisie, un résumé affiche le net de la course et les bonus /
+malus. Un toucher ouvre un détail natif dans la ligne, sous les commandes. Le
+minuteur, les relevés et les pastilles existantes sont conservés. L’ouverture est
+mémorisée temporairement lors des rafraîchissements de la saisie. La zone tactile
+mesure au moins 44 px ; le détail défile dans une hauteur limitée.
+
+Le détail reprend les composantes produites par `calc()` : objectifs de relevé,
+dépassements, régularité avec fréquence sur les relevés attendus, absence de
+marche, trois malus et éventuel plancher à zéro. Les états obtenu, en attente,
+non obtenu et non applicable sont nommés explicitement. Une saisie incomplète
+reste provisoire, sans changer les montants que le calcul existant attribue.
+
+À la validation, les deux parcours enregistrent un instantané des montants déjà
+utilisés pour créditer l’élève. Le bilan et le détail des séances du cycle lisent
+cet instantané, même si les réglages ou la vitesse changent ensuite. Les séances
+anciennes affichent « Détail des pièces non enregistré » ; aucune ventilation ni
+aucun pourcentage n’est inventé. Le mode rapide conserve son total enregistré,
+sans inventer de calcul automatique par course.
+
 ## Sources et reconstruction
 
 La V131.55 contient un chargeur `index.html` et trois fragments HTML compressés.
@@ -35,9 +57,9 @@ Le chargeur les décompresse, les concatène **en octets**, puis décode le HTML
 UTF-8. Le document contient le code de l’application et ses ressources intégrées.
 
 Les fonctions de saisie et de calcul concernées ont été reconstituées dans
-`src/session-scoring.js`. `scripts/build.cjs` relit les archives du commit V131.55
-fixé ci-dessus, réinjecte ces fonctions et applique les deux changements ciblés
-au contrôle de régularité. Il actualise aussi les libellés PWA, les URL de cache
+`src/session-scoring.js`, `src/session-entry-ui.js` et `src/coin-details-ui.js`.
+`src/coin-details.css` ne cible que les nouveaux détails. `scripts/build.cjs`
+relit les archives du commit V131.55 fixé ci-dessus et réinjecte ces sources. Il actualise aussi les libellés PWA, les URL de cache
 et le nom du cache du service worker pour la future V131.56.
 
 Les ressources, les écrans sans rapport et le moteur de stockage sont repris
@@ -71,7 +93,10 @@ conservé si son contenu décompressé est identique ; les deux premiers restent
 
 Le schéma des données reste **4**, l’enveloppe de sauvegarde reste **2**. Les clés
 localStorage, la base IndexedDB, ses stores et les formats d’import/export sont
-conservés. Aucun nouveau champ n’est nécessaire. Les brouillons V131.55 restent
+conservés. Aucun changement de schéma ni migration n’est nécessaire. Les nouveaux
+deltas possèdent un champ optionnel `coinDetails`, contenant un instantané encodé
+en JSON. Cet encodage préserve le budget de validation des anciennes sauvegardes
+lorsque plusieurs classes et cycles sont enregistrés. Les brouillons V131.55 restent
 lisibles ; leurs gains sont calculés selon les règles corrigées. Les séances déjà
 validées, leurs deltas, les soldes et les historiques ne sont pas recalculés.
 
@@ -80,7 +105,12 @@ les tableaux tronqués ou creux, la marche, les valeurs numériques anciennes, l
 courses indépendantes, les indicateurs manuels, les titres trompeurs et les seuils
 de malus personnalisés. Ils vérifient aussi le code livré dans les gzip et les
 sauvegardes complètes/par classe, avec encodage et décodage réels sur des données
-synthétiques représentatives du format V131.55.
+synthétiques représentatives du format V131.55. Les tests vérifient aussi les
+composantes affichées, les deux planchers à zéro, les deux parcours de validation,
+les détails figés après changement des réglages, et un cycle de six classes de
+35 élèves, dix séances et trois courses. Une comparaison de 504 scénarios au
+commit validé `68bc63f` garantit que les anciens résultats de calcul restent
+identiques. Les fonctions PDF et les deux premiers fragments restent inchangés.
 
 La validation sur un véritable iPad et avec une copie de sauvegarde réelle reste
 à effectuer avant publication. Ne pas supprimer la PWA installée : ses données

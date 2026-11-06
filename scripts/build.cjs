@@ -2,7 +2,7 @@
 'use strict';
 
 // V131.55 remains the immutable asset/source archive. Only the scoring block and
-// the automatic regularity control are replaced when preparing V131.56.
+// focused scoring / coin-detail UI are replaced when preparing V131.56.
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
@@ -43,10 +43,42 @@ function reconstruct() {
   html = replaceExactly(html, 'PWA V131.55', 'PWA V131.56', 4);
   html = replaceExactly(html,
     '<button class="toggle" data-a="cpReg" data-id="${p.id}" data-i="${i}" aria-pressed="${e.rg[i]}">📏 Régularité +${st.regBonus}</button>',
-    '<button class="toggle" disabled aria-pressed="${e.rg[i]}">📏 Régularité automatique · 80 % · +${st.regBonus}</button>');
+    '${courseCoinDetailsHtml(x.coinDetails,`legacy:${d.id}:${p.id}:${i}`)}');
   html = replaceExactly(html,
     "  cpReg: (d,el) => { pushUndo('régularité'); const pid=terrainPlayerId(d,el),e=entry(cls().draft,pid); e.rg[+d.i] = !e.rg[+d.i]; refreshRow(pid); },",
     '  cpReg: (d,el) => { const pid=terrainPlayerId(d,el),dr=cls().draft,e=entry(dr,pid); syncRegularity(e,+d.i,dr); refreshRow(pid); },');
+  const detailSource = fs.readFileSync(path.join(ROOT, 'src/coin-details-ui.js'), 'utf8');
+  html = replaceExactly(html, 'function terrainReleveIndex(d,co){', detailSource.trimEnd() + '\n\nfunction terrainReleveIndex(d,co){');
+  const rowStart = html.indexOf('function terrainRowHtml(');
+  const rowEnd = html.indexOf('function updateTerrainCurrentMissing', rowStart);
+  if (rowStart < 0 || rowEnd <= rowStart) throw new Error('Saisie terrain V131.55 introuvable.');
+  const entrySource = fs.readFileSync(path.join(ROOT, 'src/session-entry-ui.js'), 'utf8');
+  html = replaceExactly(html, html.slice(rowStart, rowEnd), entrySource.trimEnd() + '\n');
+  // Both validation paths retain the result already used to credit this pupil.
+  // The optional snapshot is a JSON string so old backup readers keep their
+  // existing tree-complexity budget even for several classes and full cycles.
+  html = replaceExactly(html, "speedAdjustment:adj||null};", "speedAdjustment:adj||null,coinDetails:JSON.stringify(sessionCoinSnapshot(r,d))};", 2);
+  html = replaceExactly(html, '${gradeBlock(c,lastS,p)}', '${gradeBlock(c,lastS,p)}\n      ${savedCoinDetailsHtml(lastS?.deltas?.[p.id],`bilan:${lastS?.id}:${p.id}`)}');
+  html = replaceExactly(html,
+    '<div class="fd">🎯 ${tot?Math.round(ok/tot*100):0}% · 📏 ${tot?Math.round(reg/tot*100):0}% · 🚶 ${walk}</div></div></div>',
+    '<div class="fd">🎯 ${tot?Math.round(ok/tot*100):0}% · 📏 ${tot?Math.round(reg/tot*100):0}% · 🚶 ${walk}</div>${savedCoinDetailsHtml(d,`cycle:${ss.id}:${pid}`)}</div></div>');
+  const css = fs.readFileSync(path.join(ROOT, 'src/coin-details.css'), 'utf8');
+  // Appending the style after the asset-heavy main script keeps parts 1 and 2
+  // untouched, including the character artwork and PDF-specific styles.
+  const pwaScript = '</script>\n\n<script>\n/* V131.39';
+  html = replaceExactly(html, pwaScript, '</script>\n<style id="v131-56-coins">\n' + css + '\n</style>\n<script>\n/* V131.39');
+  html = replaceExactly(html,
+    '/* ---------- Démarrage : aucune interface modifiable avant la lecture IndexedDB. ---------- */',
+    `// Native inline disclosures retain their state when a pupil row is refreshed.
+document.addEventListener('toggle', event => {
+  const detail=event.target;
+  if(detail.matches?.('details[data-coin-key]')){
+    ui.coinOpen=ui.coinOpen||{};
+    ui.coinOpen[detail.dataset.coinKey]=detail.open;
+  }
+},true);
+
+/* ---------- Démarrage : aucune interface modifiable avant la lecture IndexedDB. ---------- */`);
   return { archived, parts, original, html };
 }
 

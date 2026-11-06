@@ -40,7 +40,7 @@ test('all inline scripts in the delivered application parse successfully', () =>
 test('the delivered regularity control is an automatic status with no manual action', () => {
   const row = block(html, 'function srow(d, p) {', 'function seanceTotals(d) {');
   assert.doesNotMatch(row, /data-a=["']cpReg["']/);
-  assert.match(row, /<button class="toggle" disabled aria-pressed="\$\{e\.rg\[i\]\}">📏 Régularité automatique · 80 %/);
+  assert.match(row, /courseCoinDetailsHtml\(x\.coinDetails/);
 });
 
 test('the delivered legacy cpReg action cannot grant an invalid bonus or disable a valid one', () => {
@@ -89,4 +89,27 @@ test('the delivered persistence, migration and backup implementations remain unc
   ]) {
     assert.equal(block(html, start, end), block(baselineHtml, start, end));
   }
+});
+
+test('the active reading interface and inline detail use the reviewed source', () => {
+  const ui = block(html, 'function coinAmount(', 'function terrainReleveIndex(');
+  const source = readFileSync(path.join(root, 'src/coin-details-ui.js'), 'utf8');
+  assert.equal(ui.trim(), source.slice(source.indexOf('function coinAmount(')).trim());
+  const row = block(html, 'function terrainRowHtml(', 'function updateTerrainCurrentMissing(');
+  const rowSource = readFileSync(path.join(root, 'src/session-entry-ui.js'), 'utf8');
+  assert.equal(row.trim(), rowSource.slice(rowSource.indexOf('function terrainRowHtml(')).trim());
+  assert.match(row, /courseCoinDetailsHtml\(coinDetail/);
+  assert.match(row, /\$\{av\(p,'sm'\)\}/);
+  assert.match(html, /document\.addEventListener\('toggle'/);
+});
+
+test('the character renderers, timer and PDF generator remain unchanged', () => {
+  for (const [start, end] of [
+    ['function seanceTimerPanel(', 'function seanceTimerAdvance('],
+    ['  copySheetPages: async () => {', '  objectivePrint: () =>'],
+  ]) assert.equal(block(html, start, end), block(baselineHtml, start, end));
+  const css = readFileSync(path.join(root, 'src/coin-details.css'), 'utf8');
+  assert.ok(html.includes(css));
+  assert.doesNotMatch(css, /(^|\})\s*\.coin-badge\b/);
+  assert.doesNotMatch(css, /position\s*:\s*(fixed|absolute)/);
 });
