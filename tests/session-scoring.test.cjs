@@ -39,8 +39,9 @@ for (const [label, values, expected, result] of [
   ['3/5', [10, 10, 10, 11, 12], 5, false],
   ['8/10', [10, 10, 10, 10, 10, 10, 10, 10, 11, 12], 10, true],
   ['2/3', [10, 10, 11], 3, false],
+  ['2/2', [10, 10], 2, true],
   ['3/3', [10, 10, 10], 3, true],
-  ['1/1', [10], 1, true],
+  ['1/1', [10], 1, false],
   ['0/0', [], 0, false],
   ['valeur dominante après le premier relevé', [11, 10, 10, 10, 10], 5, true],
   ['valeurs nulles numériques identiques', [0, 0, 0, 0, 1], 5, true],
@@ -81,6 +82,28 @@ test('le bonus est attribué automatiquement, même si rg sauvegardé vaut false
   assert.equal(r.per[0].b, 10);
   assert.equal(r.per[0].releveCoins, 26);
   assert.equal(r.coins, 36);
+});
+
+test('un seul relevé attendu refuse la régularité malgré rg=true sans retirer le bonus sans marche', () => {
+  const h = harness({ values: [10], expected: 1, regular: true });
+  const r = h.calc(h.d, h.p);
+  assert.equal(r.per[0].regular, false);
+  assert.equal(h.e.rg[0], false);
+  assert.equal(r.per[0].regularReleves, 0);
+  assert.equal(r.per[0].noWalk, true);
+  assert.equal(r.per[0].b, 5);
+  assert.equal(r.coins, 10);
+});
+
+test('deux relevés attendus identiques activent automatiquement la régularité', () => {
+  const h = harness({ values: [10, 10], expected: 2, regular: false });
+  const r = h.calc(h.d, h.p);
+  assert.equal(r.per[0].regular, true);
+  assert.equal(h.e.rg[0], true);
+  assert.equal(r.per[0].regularReleves, 2);
+  assert.equal(r.per[0].noWalk, true);
+  assert.equal(r.per[0].b, 10);
+  assert.equal(r.coins, 20);
 });
 
 test('une attribution manuelle de rg ne contourne pas le seuil', () => {

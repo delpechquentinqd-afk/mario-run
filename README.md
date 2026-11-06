@@ -9,8 +9,9 @@ La fusion et la mise en ligne attendent la validation du propriétaire.
 - **Malus :** le numéro de la séance en cours est le nombre de séances validées
   dans la classe, plus un. Le titre n’intervient jamais. Le réglage
   `malusStartSession`, sa valeur par défaut et son plancher existant sont conservés.
-- **Régularité :** une même valeur doit représenter au moins 80 % du nombre total
-  de relevés attendus pour cette course. Tous les relevés doivent être renseignés
+- **Régularité :** la course doit comporter au moins deux relevés attendus. Une
+  même valeur doit représenter au moins 80 % du nombre total de relevés attendus
+  pour cette course. Tous les relevés doivent être renseignés
   et aucune marche ne doit être enregistrée. La fréquence est comptée séparément
   pour chaque course, sans arrondir le pourcentage.
 
@@ -20,7 +21,8 @@ La fusion et la mise en ligne attendent la validation du propriétaire.
 | 3/5 | Non |
 | 8/10 | Oui |
 | 2/3 | Non |
-| 1/1 | Oui (100 %) |
+| 1/1 | Non (minimum de deux relevés attendus) |
+| 2/2 | Oui |
 
 Le statut devient automatique. Le calcul des gains réévalue la règle, même si un
 ancien brouillon contient un indicateur `rg` attribué manuellement. L’ancien

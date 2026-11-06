@@ -7,7 +7,7 @@ function entry(d, pid) {
 
 function autoRegularityForCourse(e,i,expectedCount){
   const vals=e?.cp?.[i]||[], walks=e?.w?.[i]||[];
-  if(!Number.isInteger(expectedCount) || expectedCount<1 || vals.length!==expectedCount || walks.some(Boolean)) return false;
+  if(!Number.isInteger(expectedCount) || expectedCount<2 || vals.length!==expectedCount || walks.some(Boolean)) return false;
   const counts=new Map();
   let mostFrequent=0;
   for(let k=0;k<expectedCount;k++){
@@ -17,7 +17,7 @@ function autoRegularityForCourse(e,i,expectedCount){
     counts.set(value,count);
     mostFrequent=Math.max(mostFrequent,count);
   }
-  // Comparaison entière : au moins 80 % de tous les relevés attendus.
+  // Au moins deux relevés attendus, puis comparaison entière au seuil de 80 %.
   return mostFrequent*5>=expectedCount*4;
 }
 function syncRegularity(e,i,d=cls()?.draft){
