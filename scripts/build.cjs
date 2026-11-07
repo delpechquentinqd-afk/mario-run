@@ -61,11 +61,26 @@ function reconstruct() {
   }
   html=replaceExactly(html,'  cpAll: (d,el) => {','  cpAll: (d,el) => { if(!v157CanEditCourse(cls()?.draft,terrainPlayerId(d,el),+d.i))return;');
   html=replaceExactly(html,'  courseAllTargets: d => {','  courseAllTargets: d => { if(!v157CanEditCourseForAll(cls()?.draft,+d.i))return;');
+  // Manual reading entry stays silent; timed course cues are retained verbatim.
+  for(const [action,next,sound] of [
+    ['cpTarget','cpStep','coinSound();'],
+    ['cpStep','cpAll',"beep(880, .03, 'sine', .05); "],
+    ['cpAll','cpWalk','coinSound(); '],
+  ]){
+    const start=html.indexOf(`  ${action}: (d,el) => {`),end=html.indexOf(`  ${next}: (d,el) => {`,start);
+    if(start<0||end<=start)throw new Error(`Action de saisie introuvable : ${action}`);
+    const before=html.slice(start,end);
+    html=replaceExactly(html,before,replaceExactly(before,sound,''));
+  }
+  for(const event of ['pointerdown','touchend']){
+    html=replaceExactly(html,`document.addEventListener('${event}',()=>{ if(S?.settings?.sound!==false) unlockAudio(); },{capture:true,passive:true});`,`document.addEventListener('${event}',v157PrimeGestureAudio,{capture:true,passive:true});`);
+  }
+  html=replaceExactly(html,'function gpPriceInputFromTarget(',source('entry-audio.js')+'\nfunction gpPriceInputFromTarget(');
   html=replaceExactly(html,'function vClassHome()',source('v13157-disclosures.js')+'\nfunction vClassHome()');
   // State-aware resume only navigates to the existing draft; no timer is started.
   html=replaceExactly(html,'  goPrepare: () => {',"  v157ResumeSession: () => {ui.tab='lesson';ui.lessonStage='seance';ui.sessionStage=cls()?.draft?'courses':'hub';render();window.scrollTo(0,0);},\n  goPrepare: () => {");
   html=replaceExactly(html,'/* ---------- Démarrage : aucune interface modifiable avant la lecture IndexedDB. ---------- */',"document.addEventListener('toggle',v157TrackDisclosure,true);\n\n/* ---------- Démarrage : aucune interface modifiable avant la lecture IndexedDB. ---------- */");
-  const css=['home-v13157.css','preparation-v13157.css','session-v13157.css'].map(source).join('\n');
+  const css=['home-v13157.css','preparation-v13157.css','session-v13157.css','ranking-history-v13157.css'].map(source).join('\n');
   const pwa='<script>\n/* V131.39';
   html=replaceExactly(html,pwa,'<style id="v131-57-ergonomie">\n'+css+'</style>\n'+pwa);
   return {archived,parts,original,html};

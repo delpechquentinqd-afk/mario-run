@@ -25,6 +25,11 @@ principale attendent une validation explicite.
   Un relevé validé affiche son état et une action distincte « Corriger » ; sa
   saisie est verrouillée jusqu’à cette correction. Une séance terminée remplace
   le bouton de clôture par son état et les accès à la suite, au bilan et aux sauvegardes.
+  La saisie des relevés reste silencieuse, y compris l’amorçage audio au toucher ;
+  Démarrer/Reprendre conserve cet amorçage pour les signaux de course sur iPad.
+
+Dans Classement, les vignettes d’équipes de l’historique utilisent le même format
+30 × 41 px qu’en préparation du Grand Prix. Ce style ne concerne que l’historique.
 
 Les nouveaux dépliages conservent temporairement leur état lors des
 rafraîchissements. Cet état de présentation ne modifie pas les classes ni leurs
