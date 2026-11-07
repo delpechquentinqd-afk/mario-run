@@ -1,10 +1,10 @@
-name: Tests V131.56
+name: Tests Mario Run
 
 on:
   pull_request:
   push:
     branches:
-      - fix/v131.56-malus-regularite
+      - feat/v131.57-ergonomie-ipad
 
 permissions:
   contents: read

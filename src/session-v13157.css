@@ -1,0 +1,60 @@
+/* V131.57 — uniquement la saisie de séance, sans toucher aux cartes ou pastilles. */
+.v157-session{min-width:0;--v157-dock-top:calc(var(--mr-header-height,80px) + 4px)}
+.v157-session .v157-session-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.v157-session .v157-session-head h1{font-size:22px;line-height:1.2;margin:0}
+.v157-session .v157-session-tools{font-size:13px;margin-left:auto;max-width:100%}
+.v157-session summary{cursor:pointer;touch-action:manipulation}
+.v157-session .v157-session-tools>summary,.v157-session .v157-session-help>summary,.v157-session .v157-course-missing>summary,.v157-session .v157-reading-history>summary{display:flex;align-items:center;min-height:44px;box-sizing:border-box;padding:7px 10px;border-radius:9px;font-weight:800;list-style:none}
+.v157-session .v157-session-tools>summary::after,.v157-session .v157-session-help>summary::after,.v157-session .v157-course-missing>summary::after,.v157-session .v157-reading-history>summary::after{content:'⌄';margin-left:8px}
+.v157-session .v157-session-tools[open]>summary::after,.v157-session .v157-session-help[open]>summary::after,.v157-session .v157-course-missing[open]>summary::after,.v157-session .v157-reading-history[open]>summary::after{content:'⌃'}
+.v157-session summary::-webkit-details-marker{display:none}
+.v157-session summary:focus-visible{outline:3px solid #168fd2;outline-offset:-3px}
+.v157-session .v157-session-tools>div{display:flex;gap:7px;flex-wrap:wrap;padding-top:5px}
+.v157-session .v157-session-tools .btn{min-height:44px}
+.v157-session .v157-session-dock{position:sticky;top:var(--v157-dock-top);z-index:45;background:var(--bg,#f2f5f9);padding:0 0 5px;border-radius:14px;isolation:isolate}
+.v157-session .v157-session-dock .session-timer{position:static!important;top:auto!important;margin:0!important;padding:9px 12px!important;box-shadow:none!important;border-radius:14px 14px 0 0!important}
+.v157-session .session-timer .mini-timer-line{display:grid;grid-template-columns:minmax(140px,1fr) auto minmax(150px,1fr);gap:9px;align-items:center}
+.v157-session .session-timer .mini-timer-line>b{font-size:14px!important;line-height:1.3}
+.v157-session .session-timer .mini-timer-line .bigtime{font-size:clamp(30px,4vw,40px)!important;line-height:1!important;margin:0!important}
+.v157-session .session-timer .mini-timer-line .next-signal{font-size:14px!important;line-height:1.3!important;margin:0!important}
+.v157-session .session-timer .timer-actions{position:static!important;display:flex!important;gap:7px!important;flex-wrap:wrap;justify-content:flex-start;margin-top:7px!important}
+.v157-session .session-timer .timer-actions .btn{min-height:44px!important;padding:8px 12px!important;font-size:13px!important;line-height:1.25;box-sizing:border-box}
+.v157-session .session-timer .timer-actions .btn-ghost{background:#ffffff18;color:#fff;border:1px solid #ffffff55}
+.v157-session .session-timer.awaiting{color:#644900}
+.v157-session .session-timer.awaiting .next-signal{color:#644900}
+.v157-session .session-timer.awaiting .timer-actions .btn-ghost{color:#644900;background:#fff;border-color:#e4c876}
+.v157-session .v157-focus-leave{display:none}
+body.teacher-focus .v157-session .v157-focus-enter{display:none}
+body.teacher-focus .v157-session .v157-focus-leave{display:inline}
+body.teacher-focus .v157-session{--v157-dock-top:var(--st)}
+body.teacher-focus .v157-session>.page-head{position:static!important;top:auto!important}
+body:has(.v157-session) .session-progress{margin:4px 0 7px;gap:4px}
+body:has(.v157-session) .session-progress-step{min-width:76px;padding:5px 7px;font-size:11px}
+body:has(.v157-session) .session-progress-step .mini{display:none}
+.v157-session .terrain-releve-nav{position:static!important;display:flex;flex-wrap:nowrap;gap:7px;margin:0!important;padding:6px 8px;border-radius:0 0 12px 12px;background:#eef3fa;box-shadow:0 5px 12px #18263d14}
+.v157-session .terrain-releve-nav>.btn{min-width:44px;min-height:44px;padding:7px;flex:0 0 auto}
+.v157-session .terrain-index{font-size:15px;min-width:110px;flex:0 0 auto}
+.v157-session .terrain-releve-tabs{min-width:0;flex:1 1 auto;gap:5px;overflow-x:auto;overscroll-behavior-x:contain}
+.v157-session .terrain-releve-tabs button{min-width:44px;min-height:44px;flex:0 0 auto;font-size:14px;touch-action:manipulation}
+.v157-session .active-entry-panel{margin-top:8px!important}
+.v157-session .v157-course-context{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#4b5e78;font-size:13px}
+.v157-session .v157-session-help{margin-left:auto;max-width:100%}
+.v157-session .v157-session-help p{font-size:13px;line-height:1.45;margin:6px 4px}
+.v157-session .terrain-current-missing{font-size:13px;line-height:1.4;margin:5px 0 9px}
+.v157-session .terrain-student-row{grid-template-columns:minmax(170px,1.4fr) minmax(250px,1fr);padding:9px 10px;gap:7px 10px}
+.v157-session .terrain-student-name .nm{font-size:16px;white-space:normal;overflow:visible;line-height:1.25;overflow-wrap:anywhere}
+.v157-session .terrain-student-name .meta{font-size:13px;margin-top:3px;color:#425979}
+.v157-session .v157-student-info{display:flex;align-items:center;gap:3px 10px;flex-wrap:wrap}.v157-session .v157-student-info>.meta{flex:1 1 auto}.v157-session .v157-reading-history{font-size:12px;color:#63728a;margin-top:0;flex:0 1 auto}.v157-session .v157-reading-history[open]{flex:1 1 100%}
+.v157-session .v157-reading-history>summary{padding:3px 0;min-height:44px;font-size:12px;font-weight:700}
+.v157-session .v157-reading-history .terrain-row-summary{font-size:12px;white-space:normal;overflow:visible;line-height:1.45;margin:0 0 4px}
+.v157-session .terrain-student-controls{gap:7px}
+.v157-session .terrain-student-controls .mbtn{min-width:48px!important}
+.v157-session .v157-course-missing{margin:8px 0;color:#52647c;font-size:13px;background:#f4f7fb;border:1px solid #d3ddea;border-radius:10px}
+.v157-session .v157-course-missing>summary{line-height:1.35}
+.v157-session .v157-course-missing>p{margin:0;padding:0 10px 10px;line-height:1.45}
+.v157-session .group-validate-bar{padding:7px;margin-top:9px}
+.v157-session .group-validate-bar .btn{min-height:48px!important;font-size:16px!important;padding:10px 14px!important}
+@media(max-width:700px){.v157-session .v157-session-head h1{font-size:18px}.v157-session .session-timer .mini-timer-line{grid-template-columns:minmax(0,1fr) auto}.v157-session .session-timer .mini-timer-line .next-signal{grid-column:1/-1;text-align:left!important}.v157-session .terrain-student-row{grid-template-columns:minmax(0,1fr)}.v157-session .terrain-student-controls{justify-content:flex-start}.v157-session .terrain-index{min-width:90px;font-size:14px}.v157-session .terrain-releve-nav{gap:4px;padding:5px}.v157-session .timer-actions .session-undo{max-width:100%;white-space:normal}.v157-session .v157-session-help{margin-left:0}.v157-session .v157-session-tools{width:100%}.v157-session .v157-session-head{flex-wrap:wrap}.v157-session .v157-reading-history>summary{min-height:44px}}
+@media(max-height:650px) and (orientation:landscape){.v157-session .session-timer .mini-timer-line .bigtime{font-size:30px!important}.v157-session .session-timer .timer-actions .btn{padding:6px 9px!important}.v157-session .v157-session-head{margin-bottom:5px}}
+
+.v157-validation-status{color:#246b2d;font-weight:850;font-size:15px;line-height:1.4;padding:10px 12px;background:#e7f6e9;border:1px solid #b4d8ba;border-radius:10px}.v157-session .group-validate-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.v157-session .group-validate-bar>.v157-validation-status{flex:1 1 180px}.v157-session-finished p{margin:8px 0;color:var(--ink-2)}.v157-session-finished .btn{min-height:44px}.v157-session .terrain-student-controls button:disabled{opacity:.5;cursor:default}

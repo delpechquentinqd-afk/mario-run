@@ -7,7 +7,7 @@ const { gunzipSync } = require('node:zlib');
 const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
-const baselineCommit = '1ec9464c1ee82c0d8c2dfcadfb5b35212a969b95';
+const baselineCommit = 'c2255f4a6875670792b18581e4552c28b09a7fa7';
 const baseline = name => execFileSync('git', ['show', `${baselineCommit}:${name}`], {
   cwd: root, maxBuffer: 40 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -76,7 +76,7 @@ test('the delivered legacy cpReg action cannot grant an invalid bonus or disable
   assert.equal(refreshed, 3);
 });
 
-test('the first two compressed parts remain byte-for-byte identical to V131.55', () => {
+test('the first two compressed parts remain byte-for-byte identical to published V131.56', () => {
   for (const i of [1, 2]) {
     assert.ok(archives[i - 1].equals(baseline(`app-part-${i}.gz`)));
   }
@@ -103,9 +103,9 @@ test('the active reading interface and inline detail use the reviewed source', (
   assert.match(html, /document\.addEventListener\('toggle'/);
 });
 
-test('the character renderers, timer and PDF generator remain unchanged', () => {
+test('timer runtime and PDF generator remain unchanged while presentation evolves', () => {
   for (const [start, end] of [
-    ['function seanceTimerPanel(', 'function seanceTimerAdvance('],
+    ['function seanceTimerAdvance(', 'function terrainReleveIndex('],
     ['  copySheetPages: async () => {', '  objectivePrint: () =>'],
   ]) assert.equal(block(html, start, end), block(baselineHtml, start, end));
   const css = readFileSync(path.join(root, 'src/coin-details.css'), 'utf8');
