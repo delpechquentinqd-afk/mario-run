@@ -34,14 +34,24 @@ for (const [label, start, end] of [
   ['recorded coin details and snapshots', 'function coinAmount(', 'function terrainReleveIndex('],
   ['storage and migrations', '/* ---------- État & persistance ---------- */', 'const ui ='],
   ['backup formats and restore validation', 'function cloneJson(', 'function backupDateTime('],
-  ['both session credit/validation paths', 'function commitCoursesAndContinueGP()', 'function rollbackSessionSpeedIfSafe('],
   ['timer advancement and signals', 'function seanceTimerAdvance(', 'function focusActiveSeanceEntry('],
-  ['reading validation and missing-value confirmation', '  seanceValidateGroup: d => {', '  seanceToGP:'],
   ['Grand Prix cards and gameplay', 'const GP_STEPS =', '/* ---------- Vue Cartes ---------- */'],
   ['native multipage PDF exporter', '  copySheetPages: async () => {', '  objectivePrint: () =>'],
 ]) {
   test(`V131.57 preserves ${label}`, () => {
     assert.equal(block(html, start, end), block(original, start, end));
+  });
+}
+
+for (const [name, end] of [
+  ['commitCoursesAndContinueGP', 'function commitCurrentSession('],
+  ['commitCurrentSession', 'function rollbackSessionSpeedIfSafe('],
+]) {
+  test(`V131.57 preserves the financial loop and saved record of ${name}`, () => {
+    const next = block(html, `function ${name}(`, end);
+    const previous = block(original, `function ${name}(`, end);
+    const financial = code => code.match(/    const deltas=[\s\S]*?\n    c\.sessions\.push\([^\n]+/)[0];
+    assert.equal(financial(next), financial(previous), 'Coins, body points, objective counts and frozen details must remain identical.');
   });
 }
 
@@ -63,7 +73,7 @@ test('the loader and offline service worker change only their release identifier
 });
 
 test('the delivered V131.57 interface matches the reviewed UI source files', () => {
-  for (const name of ['home-classes.js', 'home-overview.js', 'preparation-view.js', 'preparation-section.js', 'session-view.js', 'session-timer-ui.js']) {
+  for (const name of ['home-classes.js', 'home-overview.js', 'preparation-view.js', 'preparation-section.js', 'session-view.js', 'session-entry-ui.js', 'session-timer-ui.js', 'validation-state.js', 'session-commit.js', 'reading-validation.js', 'validation-ui.js']) {
     const code=source(name).replace(/^\/\*[\s\S]*?\*\/\s*/, '').trim();
     assert.ok(html.includes(code), `Missing delivered source: ${name}`);
   }
@@ -262,7 +272,7 @@ function session({ values = [null, null, null], walks, k = 0, phase = 'ready', r
   c.draft = {
     id: 'draft-live', title: 'Séance active', mode: 'detail', interval: 90,
     courses: [{ dur: 270, releves: 3, releveSec: 90, pct: 90 }],
-    timer: { phase, t0: running ? 1793952000000 : null, acc: 0, completed: done }, e: {},
+    timer: { segment: 0, phase, t0: running ? 1793952000000 : null, acc: 0, completed: done, validatedReleves: {}, validatedSegments: {} }, e: {},
   };
   const d = c.draft;
   d.e.p1 = { ab: false, cp: [values], w: [walks || values.map(() => false)], rg: [false], warm: 'done' };
@@ -288,6 +298,7 @@ function session({ values = [null, null, null], walks, k = 0, phase = 'ready', r
   });
   vm.runInContext(source('session-scoring.js') + '\n' + source('coin-details-ui.js') + '\n' +
     block(original, 'function terrainReleveIndex(', 'function terrainRowHtml(') + '\n' +
+    source('validation-state.js') + '\n' + source('reading-validation.js') + '\n' + source('validation-ui.js') + '\n' +
     source('session-entry-ui.js') + '\n' + source('session-timer-ui.js') + '\n' + source('session-view.js'), h.ctx);
   return { ...h, c, d };
 }
@@ -327,9 +338,48 @@ test('running and paused timer views do not alter phase, time or accumulated dur
 
 test('completed courses retain the existing Grand Prix or evaluation continuation', () => {
   const h = session({ done: true });
-  assert.match(h.ctx.seanceEntry(h.c), /data-a="seanceToGP">Grand Prix →/);
+  assert.match(h.ctx.seanceEntry(h.c), /data-a="seanceToGP"[^>]*>Grand Prix →/);
   h.f.S.preparation.gpMinutes = 0;
-  assert.match(h.ctx.seanceEntry(h.c), /data-a="seanceToGP">Valider l’évaluation →/);
+  assert.match(h.ctx.seanceEntry(h.c), /data-a="seanceToGP"[^>]*>Valider l’évaluation →/);
+});
+
+test('a validated reading displays its status and explicit correction instead of a second validate action', () => {
+  const h = session({ values: [10, 10, 10] });
+  h.d.timer.validatedReleves = { 0: { 0: true } };
+  h.c.players.forEach(p => h.ctx.calc(h.d, p)); // Existing calculation synchronizes the derived compatibility flag rg.
+  const before = plain(h.f.S), rendered = h.ctx.seanceEntry(h.c);
+  assert.match(rendered, /role="status">✓ Relevé 1 validé/);
+  assert.equal(actions(rendered).filter(a => a === 'seanceValidateGroup').length, 0);
+  assert.equal(actions(rendered).filter(a => a === 'v157CorrectReading').length, 1);
+  assert.match(rendered, /data-a="v157CorrectReading" data-draft="draft-live" data-segment="0" data-k="0" data-group="1"/);
+  assert.match(rendered, /aria-label="Relevé 1 · validé"/);
+  const row = rendered.slice(rendered.indexOf('data-player="p1"'), rendered.indexOf('data-coin-key="live:draft-live:p1:0"'));
+  assert.equal((row.match(/ disabled/g) || []).length, 4, 'Target, both steppers and walk remain locked until correction.');
+  assert.match(rendered, /id="seance-timer-value"/);
+  assert.deepEqual(plain(h.f.S), before);
+});
+
+test('an unvalidated or pending reading exposes identity and pending state without hiding timer or entered values', () => {
+  const h = session({ values: [10, null, 10] });
+  const key = h.ctx.v157ReadingKey(h.c, h.d, 0, 0);
+  h.ctx.v157BeginValidation(key);
+  const rendered = h.ctx.seanceEntry(h.c);
+  assert.match(rendered, /data-a="seanceValidateGroup" data-draft="draft-live" data-segment="0" data-k="0" data-group="1"/);
+  assert.match(rendered, /data-validation-key="read:class-a:draft-live:0:0"[^>]*disabled[^>]*aria-busy="true"/);
+  assert.match(rendered, /Validation en cours…/); assert.match(rendered, /id="seance-timer-value"/);
+  assert.equal(actions(rendered).filter(a => a === 'v157CorrectReading').length, 0);
+});
+
+test('a finished session replaces its final validation with a saved status and next-session actions', () => {
+  const h = session(); h.c.draft = null;
+  h.c.sessions = [{ id: 'saved', title: 'Séance enregistrée', finishedAt: 1794000000000 }];
+  const before = plain(h.f.S), rendered = h.ctx.v157FinishControls(h.c);
+  assert.match(rendered, /role="status">✓ Séance terminée/);
+  assert.equal(actions(rendered).filter(a => a === 'finishSessionBackup').length, 0);
+  for (const action of ['goPrepare', 'openGradeSheet', 'backupCenter']) assert.ok(actions(rendered).includes(action));
+  assert.deepEqual(plain(h.f.S), before);
+  delete h.c.sessions[0].finishedAt;
+  assert.equal(actions(h.ctx.v157FinishControls(h.c)).filter(a => a === 'finishSessionBackup').length, 1, 'Historical records without the optional marker remain eligible for deliberate closure.');
 });
 
 test('the session dock follows the measured header and releases that offset in terrain mode', () => {

@@ -21,7 +21,10 @@ principale attendent une validation explicite.
   la hauteur réelle de l’en-tête. Identité, cible, saisie et pièces sont
   prioritaires ; vitesse/historique, aide et opérations secondaires se déplient
   en ligne. Pause/Reprise et annulation de la dernière saisie restent immédiates.
-  La validation conserve son action et son avancement existants.
+  Chaque validation est liée au relevé affiché et bloquée dès le premier toucher.
+  Un relevé validé affiche son état et une action distincte « Corriger » ; sa
+  saisie est verrouillée jusqu’à cette correction. Une séance terminée remplace
+  le bouton de clôture par son état et les accès à la suite, au bilan et aux sauvegardes.
 
 Les nouveaux dépliages conservent temporairement leur état lors des
 rafraîchissements. Cet état de présentation ne modifie pas les classes ni leurs
@@ -34,13 +37,15 @@ sont pas modifiés. Les médias intégrés (pastilles, cartes, animations et son
 les fiches A4 et le générateur PDF sont conservés.
 
 Les calculs, montants, bonus et malus, les instantanés de pièces V131.56, les
-validations, les phases/rotations du minuteur et les fonctions de sauvegarde
+crédits, les phases/rotations du minuteur et les fonctions de sauvegarde
 restent identiques à la version publiée. La régularité conserve notamment ses
 conditions : au moins deux relevés attendus, 80 % identiques, course complète,
 aucune marche, attribution automatique.
 
 Le schéma de données reste **4**, l’enveloppe des sauvegardes **2**, avec les mêmes
 clés localStorage et bases IndexedDB. Aucune migration ni réécriture historique.
+Le champ facultatif `finishedAt` est ajouté uniquement lors d’une nouvelle clôture
+explicite, pour la mémoriser après rechargement ; les anciennes séances restent lisibles.
 Le chargeur et le service worker changent uniquement leurs identifiants de
 version pour la future mise à jour hors ligne.
 
@@ -53,7 +58,7 @@ concernés. `src/v13157-disclosures.js` conserve seulement l’état UI temporai
 Les sources de calcul et de détail financier V131.56 sont gardées sans changement.
 
 `scripts/build.cjs` relit les trois gzip du commit publié fixé ci-dessus et
-remplace uniquement les blocs d’interface identifiés, avec contrôles des ancres.
+remplace les blocs d’interface et de validation identifiés, avec contrôles des ancres.
 Les deux premiers fragments sont repris octet pour octet ; seul le troisième
 est recompressé. Le commit de référence doit être présent dans l’historique Git.
 
@@ -78,6 +83,9 @@ et par classe, et un cycle de six classes de 35 élèves sur dix séances.
 Les tests V131.57 vérifient les trois modes de préparation, les actions/champs
 conservés, les alertes visibles, la reprise sans modification de brouillon, les
 états vide/marche/complet, les phases du minuteur et les dépliages. Les blocs
+de validation sont aussi testés contre les doubles touchers, les confirmations
+annulées ou périmées et les doubles crédits/clôtures. Les boucles de crédit et les
+instantanés enregistrés restent identiques à la V131.56. Les blocs
 protégés et tous les médias intégrés sont comparés au commit publié. Les contrôles
 des cibles tactiles et du bandeau iPad sont structurels : ils ne remplacent pas
 une validation visuelle sur Safari.

@@ -2,7 +2,7 @@
 'use strict';
 
 // V131.56 published source is the immutable baseline. V131.57 replaces only
-// the three approved screen presentations; protected game/data code is retained.
+// the approved screen presentations and validation guards; calculations are retained.
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
@@ -42,6 +42,25 @@ function reconstruct() {
   html=replaceBlock(html,'function seanceTimerPanel(','function seanceTimerAdvance(','session-timer-ui.js');
   html=replaceBlock(html,'function terrainRowHtml(','function updateTerrainCurrentMissing(','session-entry-ui.js');
   html=replaceBlock(html,'function seanceEntry(','function refreshRow(','session-view.js');
+  html=replaceBlock(html,'function commitCoursesAndContinueGP()','function rollbackSessionSpeedIfSafe(','session-commit.js');
+  html=replaceExactly(html,'function rollbackSessionSpeedIfSafe(',source('validation-state.js')+'\nfunction rollbackSessionSpeedIfSafe(');
+  html=replaceExactly(html,'function balanceTeams(',source('reading-validation.js')+'\n'+source('validation-ui.js')+'\nfunction balanceTeams(');
+  const readingStart=html.indexOf('  seanceValidateGroup: d => {'),readingEnd=html.indexOf('  seanceToGP:',readingStart);
+  if(readingStart<0||readingEnd<=readingStart)throw new Error('Action de validation du relevé introuvable.');
+  html=replaceExactly(html,html.slice(readingStart,readingEnd),'  seanceValidateGroup: (data,el) => v157ValidateReading(data,el),\n  v157CorrectReading: (data,el) => v157CorrectReading(data,el),\n');
+  html=replaceExactly(html,"function ask(title, msg, ok, cb, danger) { confirmCb = cb; openSheet('confirm', {title, msg, ok, danger}); }","function ask(title, msg, ok, cb, danger) { confirmCb = v157ConfirmationCallback(cb); openSheet('confirm', {title, msg, ok, danger}); }");
+  html=replaceExactly(html,'function closeSheet() { ui.sheet = null; renderSheet(); }','function closeSheet() { ui.sheet = null; confirmCb = null; v157CancelConfirmation(); renderSheet(); v157SyncValidationButtons(); }');
+  html=replaceExactly(html,'  confirmOk: () => { const cb = confirmCb; confirmCb = null; closeSheet(); cb && cb(); },',"  confirmOk: (_d,el) => { const cb=confirmCb;if(!cb)return;if(el){el.disabled=true;el.setAttribute('aria-busy','true');}confirmCb=null;ui.sheet=null;renderSheet();return cb(); },");
+  const finishStart=html.indexOf('  finishSessionBackup: () => {'),finishEnd=html.indexOf('\n',finishStart);
+  if(finishStart<0||finishEnd<=finishStart)throw new Error('Action de clôture introuvable.');
+  html=replaceExactly(html,html.slice(finishStart,finishEnd),"  finishSessionBackup: (_d,el) => {if(el){el.disabled=true;el.setAttribute('aria-busy','true');}return cls()?.draft?commitCurrentSession(true):v157FinishSession();},");
+  html=replaceExactly(html,'<div class="savebar"><button class="btn btn-red big" data-a="finishSessionBackup">🏁 Fin de séance</button></div>','${v157FinishControls(c)}');
+  for(const action of ['cpTarget','cpStep','cpWalk']){
+    const before=`  ${action}: (d,el) => {`;
+    html=replaceExactly(html,before,before+' if(!v157CanEditReading(cls()?.draft,terrainPlayerId(d,el),+d.i,+d.k))return;');
+  }
+  html=replaceExactly(html,'  cpAll: (d,el) => {','  cpAll: (d,el) => { if(!v157CanEditCourse(cls()?.draft,terrainPlayerId(d,el),+d.i))return;');
+  html=replaceExactly(html,'  courseAllTargets: d => {','  courseAllTargets: d => { if(!v157CanEditCourseForAll(cls()?.draft,+d.i))return;');
   html=replaceExactly(html,'function vClassHome()',source('v13157-disclosures.js')+'\nfunction vClassHome()');
   // State-aware resume only navigates to the existing draft; no timer is started.
   html=replaceExactly(html,'  goPrepare: () => {',"  v157ResumeSession: () => {ui.tab='lesson';ui.lessonStage='seance';ui.sessionStage=cls()?.draft?'courses':'hub';render();window.scrollTo(0,0);},\n  goPrepare: () => {");
