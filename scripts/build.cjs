@@ -35,6 +35,8 @@ function reconstruct() {
   const archived=PART_NAMES.map(baselineFile), parts=archived.map(part=>gunzipSync(part));
   const original=Buffer.concat(parts).toString('utf8');
   let html=replaceExactly(original,'PWA V131.56','PWA V131.57',4);
+  html=replaceExactly(html,"pwa:'V131.55'","pwa:'V131.57'");
+  html=replaceExactly(html,'Mario_Run_Diagnostic_V131_48.json','Mario_Run_Diagnostic_V131_57.json');
   html=replaceBlock(html,'function vClassHome()','function vWelcome()','home-classes.js');
   html=replaceBlock(html,'function classOverview()','function cycleSessionDetail(','home-overview.js');
   html=replaceBlock(html,'function prepSection(','function sessionSummaryStrip(','preparation-section.js');

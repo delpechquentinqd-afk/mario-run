@@ -1,9 +1,13 @@
-# Mario Run EPS — V131.57, ergonomie iPad en validation
+# Mario Run EPS — V131.57, version validée sur iPad
 
 Cette branche part de la **V131.56 publiée**, commit
 `c2255f4a6875670792b18581e4552c28b09a7fa7`. Elle prépare la V131.57 sur
 `feat/v131.57-ergonomie-ipad`. La fusion et la publication de l’application
 principale attendent une validation explicite.
+
+La version a été validée sur iPad par le propriétaire. Les notes de version,
+les contrôles et la procédure de publication sont dans
+[RELEASE_V131.57.md](RELEASE_V131.57.md).
 
 ## Trois écrans ciblés
 
@@ -58,7 +62,7 @@ version pour la future mise à jour hors ligne.
 
 `src/home-*.js`, `src/preparation-*.js`, `src/session-view.js`,
 `src/session-timer-ui.js` et `src/session-entry-ui.js` contiennent les présentations
-ciblées. Les trois feuilles `*-v13157.css` limitent leurs styles aux écrans
+ciblées. Les feuilles `*-v13157.css` limitent leurs styles aux écrans
 concernés. `src/v13157-disclosures.js` conserve seulement l’état UI temporaire.
 Les sources de calcul et de détail financier V131.56 sont gardées sans changement.
 
@@ -107,4 +111,6 @@ Sur la prévisualisation isolée, vérifier en portrait et paysage :
 5. Fiches A4/PDF, sauvegarde/restauration d’une copie et rechargement hors ligne
    après une première ouverture complète avec connexion.
 
-La validation sur un véritable iPad reste nécessaire avant fusion et publication.
+Ces vérifications ont été complétées par la validation du propriétaire sur iPad.
+La sauvegarde externe des données réelles et l’autorisation de fusion/publication
+constituent les prochaines étapes décrites dans les notes de version.
